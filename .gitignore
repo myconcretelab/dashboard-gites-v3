@@ -1,0 +1,15 @@
+# Build output
+build/
+dist/
+
+# Env files
+.env
+
+# Mac system files
+.DS_Store
+
+# VSCode
+.vscode/
+.idea/
+
+node_modules/
