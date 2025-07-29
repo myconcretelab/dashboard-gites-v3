@@ -49,10 +49,11 @@ function App() {
   // Gestion années disponibles
   const [availableYears, setAvailableYears] = useState([]);
 
+  // Récupération des données depuis l'API
   useEffect(() => {
     setLoading(true);
-    fetch(process.env.REACT_APP_GITES_API)
-      .then(res => res.json())
+    fetch(process.env.REACT_APP_GITES_API) // Assure-toi que l'URL de l'API est définie dans .env
+      .then(res => res.json()) // Utilise .json() pour parser la réponse
       .then(json => {
         setRawData(json);
         const parsed = parseGitesData(json);
