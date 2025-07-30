@@ -89,14 +89,36 @@ function computeGiteStats(entries, year, month) {
   const meanStay = reservations ? (totalNights / reservations) : 0;
   const meanPrice = totalNights ? (totalCA / totalNights) : 0;
 
-  // Répartition paiements
+  // Répartition paiements (CA)
   const payments = {};
-// On compte les paiements par type
-filtered.forEach(e => {
-  const paymentType = e.paiement && e.paiement.trim() ? e.paiement : "Indéfini"; // Si pas de paiement, on le note comme "Indéfini"
-  if (!payments[paymentType]) payments[paymentType] = 0; // Initialiser si pas encore fait
-  payments[paymentType] += e.revenus || 0; // On additionne les revenus pour chaque type de paiement
-});
+  // Répartition nuitées par groupe de paiement
+  const nuiteesByPayment = {
+    "Virement / chèque": 0,
+    "Airbnb": 0,
+    "Abritel": 0,
+    "Gites de France": 0,
+  };
+
+  filtered.forEach(e => {
+    const paymentType = e.paiement && e.paiement.trim() ? e.paiement : "Indéfini"; // Si pas de paiement, on le note comme "Indéfini"
+    if (!payments[paymentType]) payments[paymentType] = 0; // Initialiser si pas encore fait
+    payments[paymentType] += e.revenus || 0; // On additionne les revenus pour chaque type de paiement
+
+    const p = paymentType
+      .toLowerCase()
+      .replace(/[éèêë]/g, "e")
+      .replace(/[àâ]/g, "a");
+    const nuitées = (e.nuits || 0) * (e.adultes || 0);
+    if (p.includes("airbnb")) {
+      nuiteesByPayment["Airbnb"] += nuitées;
+    } else if (p.includes("abritel")) {
+      nuiteesByPayment["Abritel"] += nuitées;
+    } else if (p.includes("gites de france")) {
+      nuiteesByPayment["Gites de France"] += nuitées;
+    } else if (p.includes("virement") || p.includes("chèque") || p.includes("cheque")) {
+      nuiteesByPayment["Virement / chèque"] += nuitées;
+    }
+  });
 
 
   return {
@@ -105,7 +127,8 @@ filtered.forEach(e => {
     totalCA,
     meanStay,
     meanPrice,
-    payments
+    payments,
+    nuiteesByPayment
   };
 }
 
@@ -152,7 +175,7 @@ function getOccupationPerYear(entries, allYears, selectedMonth) {
 }
 
 // Pour URSSAF
-const URSSAF_PAYMENTS = ["Abritel", "Airbnb", "Chèque", "Virement"];
+const URSSAF_PAYMENTS = ["Abritel", "Airbnb", "Chèque", "Virement", "Gites de France"];
 function computeUrssaf(data, selectedYear, selectedMonth) {
   // Phonsine, Gree, Edmond = Sébastien
   // Liberté = Soazig
