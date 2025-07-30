@@ -66,11 +66,10 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears }) {
           <Box sx={{ flex: 1, minWidth: 250 }}>
             <Typography variant="subtitle2" color="text.secondary" mb={1}>Répartition des paiements</Typography>
             <PaymentPieChart payments={stats.payments} />
-          </Box>
-
-          <Box sx={{ flex: 1, minWidth: 250 }}>
-            <Typography variant="subtitle2" color="text.secondary" mb={1}>Nuitées par paiement</Typography>
-            <NuiteesPieChart nuitees={stats.nuiteesByPayment} />
+            <Box mt={2}>
+              <Typography variant="subtitle2" color="text.secondary" mb={1}>Nuitées par paiement</Typography>
+              <NuiteesPieChart nuitees={stats.nuiteesByPayment} />
+            </Box>
           </Box>
 
           <Box sx={{ flex: 2 }}>
