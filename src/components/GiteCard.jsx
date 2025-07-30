@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Stack, Box, Divider } from "@mui/material";
-import { computeGiteStats, getOccupationPerYear, daysInMonth, safeNum } from "../utils/dataUtils";
+import { TrendingUp, TrendingDown } from "@mui/icons-material";
+import { computeGiteStats, computeAverageCA, getOccupationPerYear } from "../utils/dataUtils";
 import ProgressBarImpots from "./ProgressBarImpots";
 import PaymentPieChart from "./PaymentPieChart";
 import NuiteesPieChart from "./NuiteesPieChart";
@@ -10,6 +11,7 @@ const COLORS = ["#2D8CFF", "#43B77D", "#F5A623", "#7E5BEF", "#FE5C73"];
 
 function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, showUrssaf }) {
   const stats = computeGiteStats(data, selectedYear, selectedMonth);
+  const averageCA = computeAverageCA(data, selectedYear, selectedMonth);
 
   // Pour les jauges d’occupation
   const occupations = getOccupationPerYear(data, availableYears, selectedMonth);
@@ -51,7 +53,24 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
         <Stack direction="row" spacing={2} justifyContent="space-between" mb={1} flexWrap="wrap">
           <Stat label="Réservations" value={stats.reservations} />
           <Stat label="Nuits" value={stats.totalNights} />
-          <Stat label="CA brut" value={stats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} />
+          <Stat
+            label="CA brut"
+            value={
+              <Box component="span" display="flex" alignItems="center">
+                {stats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                <Box component="span" display="flex" alignItems="center" ml={0.5}>
+                  {stats.totalCA >= averageCA ? (
+                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                  ) : (
+                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                  )}
+                  <Typography variant="caption" ml={0.25} color="text.secondary">
+                    {averageCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                  </Typography>
+                </Box>
+              </Box>
+            }
+          />
           <Stat label="Durée moy." value={stats.meanStay.toFixed(1) + " nuits"} />
           <Stat label="Prix moy/nuit" value={stats.meanPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} />
         </Stack>
