@@ -70,7 +70,7 @@ function Header({
                 color="primary"
               />
             }
-            label="Afficher chiffres URSSAF"
+            label="Mode déclaration"
           />
         </Box>
       </Stack>
