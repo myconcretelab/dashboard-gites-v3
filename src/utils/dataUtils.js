@@ -132,6 +132,25 @@ function computeGiteStats(entries, year, month) {
   };
 }
 
+// Moyenne du CA pour la même période sur les autres années
+function computeAverageCA(entries, year, month) {
+  // Récupère la liste des années présentes dans les données
+  const years = Array.from(new Set(
+    (entries || [])
+      .filter(e => e.debut)
+      .map(e => e.debut.getFullYear())
+  ));
+  const otherYears = years.filter(y => y !== year);
+  if (otherYears.length === 0) return 0;
+
+  const totalCA = otherYears.reduce((sum, y) => {
+    const stats = computeGiteStats(entries, y, month);
+    return sum + stats.totalCA;
+  }, 0);
+
+  return totalCA / otherYears.length;
+}
+
 // Pour les jauges d’occupation
 function computeOccupation(entries, year, month) {
   const filtered = filterDataByPeriod(entries, year, month);
@@ -211,6 +230,7 @@ module.exports = {
   filterDataByPeriod,
   computeGlobalStats,
   computeGiteStats,
+  computeAverageCA,
   computeOccupation,
   getOccupationPerYear,
   computeUrssaf,
