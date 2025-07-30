@@ -3,11 +3,12 @@ import { Card, CardContent, Typography, Stack, Box, Divider } from "@mui/materia
 import { computeGiteStats, getOccupationPerYear, daysInMonth, safeNum } from "../utils/dataUtils";
 import ProgressBarImpots from "./ProgressBarImpots";
 import PaymentPieChart from "./PaymentPieChart";
+import NuiteesPieChart from "./NuiteesPieChart";
 import OccupationGauge from "./OccupationGauge";
 
 const COLORS = ["#2D8CFF", "#43B77D", "#F5A623", "#7E5BEF", "#FE5C73"];
 
-function GiteCard({ name, data, selectedYear, selectedMonth, availableYears }) {
+function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, showUrssaf }) {
   const stats = computeGiteStats(data, selectedYear, selectedMonth);
 
   // Pour les jauges d’occupation
@@ -65,6 +66,14 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears }) {
           <Box sx={{ flex: 1, minWidth: 250 }}>
             <Typography variant="subtitle2" color="text.secondary" mb={1}>Répartition des paiements</Typography>
             <PaymentPieChart payments={stats.payments} />
+            {showUrssaf && (
+              <Box mt={2}>
+                <Typography variant="subtitle2" color="text.secondary" mb={1}>
+                  Nuitées par paiement
+                </Typography>
+                <NuiteesPieChart nuitees={stats.nuiteesByPayment} />
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ flex: 2 }}>
