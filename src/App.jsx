@@ -161,7 +161,7 @@ function App() {
           ))}
         </Grid>
       </Container>
-      <DebugCA data={data["Edmond"] || []} />
+     {/*  <DebugCA data={data["Edmond"] || []} /> Composant de debug pour les données d'Edmond */}
     </>
   );
 }
