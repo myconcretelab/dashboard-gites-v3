@@ -3,6 +3,7 @@ import {
   Paper, Box, Typography, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, Divider, Stack
 } from "@mui/material";
 import UrssafBox from "./UrssafBox";
+import ProgressBarImpots from "./ProgressBarImpots";
 
 const months = [
   { value: null, label: "-- année entière --" },
@@ -28,6 +29,9 @@ function Header({
   data,
   globalStats
 }) {
+  const caBrut = globalStats.totalCA;
+  const impot = caBrut * 0.06;
+  const caNet = caBrut * 0.94;
   return (
     <Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 4, bgcolor: "#fff", boxShadow: "0 4px 32px #ebebeb" }}>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="center" justifyContent="space-between">
@@ -88,6 +92,10 @@ function Header({
         <Typography variant="body1" fontWeight={600}>Total nuits réservées : <span style={{ color: "#1976d2" }}>{globalStats.totalNights}</span></Typography>
         <Typography variant="body1" fontWeight={600}>Chiffre d’affaire brut : <span style={{ color: "#388e3c" }}>{globalStats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span></Typography>
       </Stack>
+
+      <Box mt={2}>
+        <ProgressBarImpots caBrut={caBrut} caNet={caNet} impot={impot} />
+      </Box>
     </Paper>
   );
 }
