@@ -50,7 +50,7 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
           <Typography variant="body2" color="#bdbdbd">{selectedMonth ? `Mois ${selectedMonth}/${selectedYear}` : selectedYear}</Typography>
         </Stack>
 
-        <Stack direction="row" spacing={2} justifyContent="space-between" mb={1} flexWrap="wrap">
+        <Stack direction="row" spacing={0} justifyContent="space-between" mb={1} flexWrap="wrap">
           <Stat label="Réservations" value={stats.reservations} />
           <Stat label="Nuits" value={stats.totalNights} />
           <Stat
@@ -64,7 +64,7 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
                   ) : (
                     <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
                   )}
-                  <Typography variant="caption" ml={0.25} color="text.secondary">
+                  <Typography variant="caption" ml={0.20} color="text.secondary">
                     {averageCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
                   </Typography>
                 </Box>
@@ -82,18 +82,23 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
         <Divider sx={{ my: 2 }} />
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="flex-start" justifyContent="space-between">
-          <Box sx={{ flex: 1, minWidth: 250 }}>
+          <Box sx={{ width: 250, minWidth: 250, maxWidth: 250, mx: "auto" }}>
             <Typography variant="subtitle2" color="text.secondary" mb={1}>Répartition des paiements</Typography>
-            <PaymentPieChart payments={stats.payments} />
+            <Box sx={{ mb: 3 }}> {/* Ajoute une marge sous le camembert */}
+              <PaymentPieChart payments={stats.payments} />
+            </Box>
             {showUrssaf && (
-              <Box mt={2}>
+              <>
                 <Typography variant="subtitle2" color="text.secondary" mb={1}>
                   Nuitées par paiement
                 </Typography>
-                <NuiteesPieChart nuitees={stats.nuiteesByPayment} />
-              </Box>
+                <Box sx={{ mb: 1, pl: 0 }}> {/* Ajoute un padding-top pour écarter la légende du camembert */}
+                  <NuiteesPieChart nuitees={stats.nuiteesByPayment} />
+                </Box>
+              </>
             )}
           </Box>
+
 
           <Box sx={{ flex: 2 }}>
             <Typography variant="subtitle2" color="text.secondary" mb={1}>Taux d’occupation</Typography>

@@ -22,7 +22,7 @@ function NuiteesPieChart({ nuitees }) {
           data={data}
           dataKey="value"
           nameKey="name"
-          cx="45%"
+          cx="50%"
           cy="50%"
           innerRadius={28}
           outerRadius={45}

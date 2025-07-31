@@ -1,6 +1,7 @@
 import React from "react";
 import GaugeChart from "react-gauge-chart";
 import { Box, Stack, Typography } from "@mui/material";
+import { color } from "chart.js/helpers";
 
 // ---- VARIABLES DE COULEURS (modifiable ici ou importer depuis theme.js) ----
 const GAUGE_MAIN_COLOR      = "#ce1273ff";    // Couleur de la jauge sélectionnée
@@ -19,7 +20,7 @@ function OccupationGauge({ occupations, selectedYear, selectedMonth, showCA, caB
   return (
     <Stack direction="row" gap={2} alignItems="flex-end" justifyContent="center" flexWrap="wrap">
       {occupations.map(({ year, occupation }) => (
-        <Box key={year} align="center" sx={{ minWidth: 68 }}>
+        <Box key={year} align="center" sx={{ minWidth: 80 }}>
           <GaugeChart
             id={`gauge-${year}-${showCA ? "CA" : "occ"}`}
             nrOfLevels={10}
@@ -30,24 +31,24 @@ function OccupationGauge({ occupations, selectedYear, selectedMonth, showCA, caB
             }
             colors={
               year === selectedYear
-                ? ["#43B77D", "#e0e0e0"]
+                ? ["#d81060ff", "#d71163ff"]
                 : ["#d2d2d2", "#f7f7f7"]
             }
             arcWidth={0.23}
             hideText
-            needleColor="#bdbdbd"
-            style={{ width: 54, height: 44 }}
+            needleColor="#2f2b2bff"
+            style={{ width: 60, height: 27}}
           />
           <Typography
             variant="caption"
             sx={{
-              color: year === selectedYear ? "#388e3c" : "#bdbdbd",
+              color: year === selectedYear ? "#d71163ff" : "#bdbdbd",
               fontWeight: year === selectedYear ? 700 : 400
             }}
           >
             {year}
-          </Typography>
-          <Typography variant="caption" sx={{ color: "#757575", fontSize: 11 }}>
+          </Typography>&nbsp;-&nbsp;
+          <Typography variant="caption" sx={{ color: year === selectedYear ? "#d71163ff" : "#bdbdbd", fontSize: 11 }}>
             {showCA
               ? (caByYear[year] || 0).toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
               : `${Math.round((occupation || 0) * 100)}%`}

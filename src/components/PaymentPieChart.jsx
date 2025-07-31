@@ -22,7 +22,7 @@ function PaymentPieChart({ payments }) {
           data={data}
           dataKey="value"
           nameKey="name"
-          cx="40%"
+          cx="50%"
           cy="50%"
           innerRadius={28}
           outerRadius={45}
@@ -34,17 +34,18 @@ function PaymentPieChart({ payments }) {
             <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />
           ))}
         </Pie>
-        <Legend
-          verticalAlign="middle"
-          align="right"
-          iconType="circle"
-          layout="vertical"
-          wrapperStyle={{
-            fontSize: 12,
-            marginLeft: 8,
-            top: 15
-          }}
-        />
+<Legend
+  verticalAlign="middle"
+  align="right"
+  iconType="circle"
+  layout="vertical"
+  wrapperStyle={{
+    fontSize: 12,
+    marginLeft: 8,
+    top: 15,
+    minHeight: 100, // ou ajuste à 80, 110, etc. selon ce qui te paraît le plus équilibré
+  }}
+/>
       </PieChart>
     </ResponsiveContainer>
   );
