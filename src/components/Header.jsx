@@ -93,7 +93,7 @@ function Header({
         <Typography variant="body1" fontWeight={600}>Chiffre d’affaire brut : <span style={{ color: "#388e3c" }}>{globalStats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span></Typography>
       </Stack>
 
-      <Box mt={2}>
+      <Box mt={5} sx={{ maxWidth: "60%", mx: "auto" }}>
         <ProgressBarImpots caBrut={caBrut} caNet={caNet} impot={impot} />
       </Box>
     </Paper>
