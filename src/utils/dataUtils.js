@@ -329,6 +329,19 @@ function getMonthlyCAByGiteForYear(data, year) {
   return formatted;
 }
 
+function getMonthlyAverageCA(data) {
+  const byYear = getMonthlyCAByYear(data);
+  const years = Object.keys(byYear);
+  const count = years.length;
+  const sums = Array(12).fill(0);
+  years.forEach(year => {
+    byYear[year].months.forEach((m, idx) => {
+      sums[idx] += m.ca;
+    });
+  });
+  return sums.map((sum, idx) => ({ month: idx + 1, ca: count ? sum / count : 0 }));
+}
+
 // Pour URSSAF
 const URSSAF_PAYMENTS = ["Abritel", "Airbnb", "Chèque", "Virement", "Gites de France"];
 function computeUrssaf(data, selectedYear, selectedMonth) {
@@ -394,6 +407,7 @@ module.exports = {
   getOccupationPerYear,
   getMonthlyCAByYear,
   getMonthlyCAByGiteForYear,
+  getMonthlyAverageCA,
   computeChequeVirementNights,
   computeUrssaf,
   daysInMonth,
