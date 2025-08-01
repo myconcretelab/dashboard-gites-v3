@@ -132,76 +132,109 @@ function computeGiteStats(entries, year, month) {
   };
 }
 
-function computeAverageCA(entries, selectedYear, selectedMonth) {
+function computeAverageMetric(entries, selectedYear, selectedMonth, metric) {
   if (!entries || entries.length === 0) return 0;
 
   const today = new Date();
   const thisYear = today.getFullYear();
 
-  // Liste des années disponibles, sauf celle sélectionnée
+  // Toutes les années dispo, sauf l'année sélectionnée
   const years = Array.from(new Set(
     entries.filter(e => e.debut).map(e => e.debut.getFullYear())
   ));
   const otherYears = years.filter(y => y !== selectedYear);
 
-  if (otherYears.length === 0) return 0;
+  // Helper pour calculer la valeur selon le metric demandé
+  const computeValue = filtered => {
+    if (metric === "CA") {
+      return filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
+    }
+    if (metric === "reservations") {
+      return filtered.length;
+    }
+    if (metric === "nights") {
+      return filtered.reduce((sum, e) => sum + (e.nuits || 0), 0);
+    }
+    if (metric === "price") {
+      const totalCA = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
+      const totalNights = filtered.reduce((sum, e) => sum + (e.nuits || 0), 0);
+      return totalNights > 0 ? totalCA / totalNights : null;
+    }
+    return 0;
+  };
 
-  // Cas 1 : Mois sélectionné -> moyenne du CA pour ce mois sur toutes les autres années
-  if (selectedMonth) {
-    const caList = otherYears
-      .map(year => {
-        const filtered = entries.filter(e =>
+  const values = otherYears
+    .map(year => {
+      let filtered;
+
+      // Si un mois est sélectionné, on compare les mois
+      if (selectedMonth) {
+        filtered = entries.filter(e =>
           e.debut &&
           e.debut.getFullYear() === year &&
           (e.debut.getMonth() + 1) === Number(selectedMonth)
         );
-        const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
-        return filtered.length > 0 ? ca : null;
-      })
-      .filter(ca => ca !== null);
-    const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
-    return caList.length ? totalCA / caList.length : 0;
-  }
-
-  // Cas 2 : Année sélectionnée = année en cours
-  if (selectedYear === thisYear) {
-    // On compare sur la même période (1er janvier => aujourd'hui) des autres années
-    const month = today.getMonth(); // 0-11
-    const day = today.getDate();
-
-    const caList = otherYears
-      .map(year => {
+      } 
+      // Si l'année sélectionnée est l'année en cours
+      else if (selectedYear === thisYear) {
+        const month = today.getMonth();
+        const day = today.getDate();
         const start = new Date(year, 0, 1);
         const end = new Date(year, month, day + 1);
-        const filtered = entries.filter(e =>
+        filtered = entries.filter(e =>
           e.debut &&
           e.debut.getFullYear() === year &&
           e.debut >= start &&
           e.debut < end
         );
-        const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
-        return filtered.length > 0 ? ca : null;
-      })
-      .filter(ca => ca !== null);
-    const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
-    return caList.length ? totalCA / caList.length : 0;
-  }
+      } 
+      // Si l'année sélectionnée est une année passée
+      else {
+        // Pour les autres années passées, on prend les 12 mois
+        if (year !== thisYear) {
+          filtered = entries.filter(e =>
+            e.debut &&
+            e.debut.getFullYear() === year
+          );
+        } else {
+          // Pour l'année en cours (2025) : on ne prend que les mois déjà passés
+          const month = today.getMonth();
+          const day = today.getDate();
+          const start = new Date(year, 0, 1);
+          const end = new Date(year, month, day + 1);
+          filtered = entries.filter(e =>
+            e.debut &&
+            e.debut.getFullYear() === year &&
+            e.debut >= start &&
+            e.debut < end
+          );
+        }
+      }
 
-  // Cas 3 : Année passée sélectionnée
-  // Moyenne sur l'année entière des autres années
-  const caList = otherYears
-    .map(year => {
-      const filtered = entries.filter(e =>
-        e.debut &&
-        e.debut.getFullYear() === year
-      );
-      const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
-      return filtered.length > 0 ? ca : null;
+      const value = computeValue(filtered);
+      return filtered.length > 0 && value !== null ? value : null;
     })
-    .filter(ca => ca !== null);
+    .filter(v => v !== null);
 
-  const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
-  return caList.length ? totalCA / caList.length : 0;
+  const total = values.reduce((sum, v) => sum + v, 0);
+  return values.length ? total / values.length : 0;
+}
+
+
+function computeAverageCA(entries, selectedYear, selectedMonth) {
+  return computeAverageMetric(entries, selectedYear, selectedMonth, "CA");
+}
+
+function computeAverageReservations(entries, selectedYear, selectedMonth) {
+  return computeAverageMetric(entries, selectedYear, selectedMonth, "reservations");
+}
+
+function computeAverageNights(entries, selectedYear, selectedMonth) {
+  return computeAverageMetric(entries, selectedYear, selectedMonth, "nights");
+}
+
+function computeAveragePrice(entries, selectedYear, selectedMonth) {
+  return computeAverageMetric(entries, selectedYear, selectedMonth, "price");
 }
 
 
@@ -287,6 +320,9 @@ module.exports = {
   computeGlobalStats,
   computeGiteStats,
   computeAverageCA,
+  computeAverageReservations,
+  computeAverageNights,
+  computeAveragePrice,
   computeOccupation,
   getOccupationPerYear,
   computeUrssaf,

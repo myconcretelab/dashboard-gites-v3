@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Stack, Box, Divider } from "@mui/material";
 import { TrendingUp, TrendingDown } from "@mui/icons-material";
-import { computeGiteStats, computeAverageCA, getOccupationPerYear } from "../utils/dataUtils";
+import { computeGiteStats, computeAverageCA, computeAverageReservations, computeAverageNights, computeAveragePrice, getOccupationPerYear } from "../utils/dataUtils";
 import ProgressBarImpots from "./ProgressBarImpots";
 import PaymentPieChart from "./PaymentPieChart";
 import NuiteesPieChart from "./NuiteesPieChart";
@@ -12,6 +12,9 @@ const COLORS = ["#2D8CFF", "#43B77D", "#F5A623", "#7E5BEF", "#FE5C73"];
 function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, showUrssaf }) {
   const stats = computeGiteStats(data, selectedYear, selectedMonth);
   const averageCA = computeAverageCA(data, selectedYear, selectedMonth);
+  const averageReservations = computeAverageReservations(data, selectedYear, selectedMonth);
+  const averageNights = computeAverageNights(data, selectedYear, selectedMonth);
+  const averagePrice = computeAveragePrice(data, selectedYear, selectedMonth);
 
   // Pour les jauges d’occupation
   const occupations = getOccupationPerYear(data, availableYears, selectedMonth);
@@ -51,8 +54,42 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
         </Stack>
 
         <Stack direction="row" spacing={0} justifyContent="space-between" mb={1} flexWrap="wrap">
-          <Stat label="Réservations" value={stats.reservations} />
-          <Stat label="Nuits" value={stats.totalNights} />
+          <Stat
+            label="Réservations"
+            value={
+              <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
+                <Typography>{stats.reservations}</Typography>
+                <Box display="flex" alignItems="center" mt={0.2}>
+                  {stats.reservations >= averageReservations ? (
+                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                  ) : (
+                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                  )}
+                  <Typography variant="caption" ml={0.5} color="text.secondary">
+                    {averageReservations.toFixed(1)}
+                  </Typography>
+                </Box>
+              </Box>
+            }
+          />
+          <Stat
+            label="Nuits"
+            value={
+              <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
+                <Typography>{stats.totalNights}</Typography>
+                <Box display="flex" alignItems="center" mt={0.2}>
+                  {stats.totalNights >= averageNights ? (
+                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                  ) : (
+                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                  )}
+                  <Typography variant="caption" ml={0.5} color="text.secondary">
+                    {averageNights.toFixed(1)}
+                  </Typography>
+                </Box>
+              </Box>
+            }
+          />
           <Stat
             label="CA brut"
             value={
@@ -75,7 +112,26 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
           />
 
           <Stat label="Durée moy." value={stats.meanStay.toFixed(1) + " nuits"} />
-          <Stat label="Prix moy/nuit" value={stats.meanPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} />
+          <Stat
+            label="Prix moy/nuit"
+            value={
+              <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
+                <Typography>
+                  {stats.meanPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                </Typography>
+                <Box display="flex" alignItems="center" mt={0.2}>
+                  {stats.meanPrice >= averagePrice ? (
+                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                  ) : (
+                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                  )}
+                  <Typography variant="caption" ml={0.5} color="text.secondary">
+                    {averagePrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                  </Typography>
+                </Box>
+              </Box>
+            }
+          />
         </Stack>
 
         <Box mb={1}>

@@ -2,8 +2,10 @@ import React from "react";
 import {
   Paper, Box, Typography, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, Divider, Stack
 } from "@mui/material";
+import { TrendingUp, TrendingDown } from "@mui/icons-material";
 import UrssafBox from "./UrssafBox";
 import ProgressBarImpots from "./ProgressBarImpots";
+import { computeAverageReservations, computeAverageNights, computeAverageCA } from "../utils/dataUtils";
 
 const months = [
   { value: null, label: "-- année entière --" },
@@ -32,6 +34,11 @@ function Header({
   const caBrut = globalStats.totalCA;
   const impot = caBrut * 0.06;
   const caNet = caBrut * 0.94;
+
+  const allEntries = Object.values(data).flat();
+  const avgReservations = computeAverageReservations(allEntries, selectedYear, selectedMonth);
+  const avgNights = computeAverageNights(allEntries, selectedYear, selectedMonth);
+  const avgCA = computeAverageCA(allEntries, selectedYear, selectedMonth);
   return (
     <Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 4, bgcolor: "#fff", boxShadow: "0 4px 32px #ebebeb" }}>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="center" justifyContent="space-between">
@@ -88,9 +95,9 @@ function Header({
       <Divider sx={{ my: 2 }} />
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" justifyContent="center">
-        <Typography variant="body1" fontWeight={600}>Total réservations : <span style={{ color: "#1976d2" }}>{globalStats.totalReservations}</span></Typography>
-        <Typography variant="body1" fontWeight={600}>Total nuits réservées : <span style={{ color: "#1976d2" }}>{globalStats.totalNights}</span></Typography>
-        <Typography variant="body1" fontWeight={600}>Chiffre d’affaire brut : <span style={{ color: "#388e3c" }}>{globalStats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}</span></Typography>
+        <HeaderStat label="Total réservations" value={globalStats.totalReservations} average={avgReservations} />
+        <HeaderStat label="Total nuits réservées" value={globalStats.totalNights} average={avgNights} />
+        <HeaderStat label="Chiffre d’affaire brut" value={globalStats.totalCA} average={avgCA} isCurrency />
       </Stack>
 
       <Box mt={5} sx={{ maxWidth: "60%", mx: "auto" }}>
@@ -101,3 +108,30 @@ function Header({
 }
 
 export default Header;
+
+function HeaderStat({ label, value, average, isCurrency }) {
+  return (
+    <Box textAlign="center">
+      <Typography variant="body1" fontWeight={600}>{label}</Typography>
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <Typography fontWeight={600} color={isCurrency ? "#388e3c" : "#1976d2"}>
+          {isCurrency
+            ? value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
+            : value}
+        </Typography>
+        <Box display="flex" alignItems="center" mt={0.2}>
+          {value >= average ? (
+            <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+          ) : (
+            <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+          )}
+          <Typography variant="caption" ml={0.5} color="text.secondary">
+            {isCurrency
+              ? average.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
+              : average.toFixed(1)}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
