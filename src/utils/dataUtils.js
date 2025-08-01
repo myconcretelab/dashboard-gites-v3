@@ -352,6 +352,26 @@ function computeUrssaf(data, selectedYear, selectedMonth) {
   });
   return { urssafSeb, urssafSoazig };
 }
+
+function computeChequeVirementNights(data, selectedYear, selectedMonth) {
+  const result = {};
+  Object.keys(data).forEach(name => {
+    let nights = 0;
+    (data[name] || []).forEach(e => {
+      if (entryMatch(e, selectedYear, selectedMonth)) {
+        const p = (e.paiement || '')
+          .toLowerCase()
+          .replace(/[éèêë]/g, 'e')
+          .replace(/[àâ]/g, 'a');
+        if (p.includes('virement') || p.includes('cheque')) {
+          nights += (e.nuits || 0) * (e.adultes || 0);
+        }
+      }
+    });
+    result[name] = nights;
+  });
+  return result;
+}
 function entryMatch(e, year, month) {
   if (!e.debut) return false;
   const y = e.debut.getFullYear();
@@ -374,6 +394,7 @@ module.exports = {
   getOccupationPerYear,
   getMonthlyCAByYear,
   getMonthlyCAByGiteForYear,
+  computeChequeVirementNights,
   computeUrssaf,
   daysInMonth,
   safeNum
