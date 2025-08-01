@@ -62,7 +62,7 @@ function GlobalRevenueChart({ data, labels, selectedOption }) {
             </Box>
             <ResponsiveContainer width="100%" height={220}>
               <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="0" />
                 <XAxis dataKey='month' tickFormatter={m => MONTH_NAMES[m - 1]} />
                 {/* Échelle harmonisée avec un maximum arrondi et des paliers réguliers */}
                 <YAxis domain={[0, roundedMax]} ticks={ticks} />
