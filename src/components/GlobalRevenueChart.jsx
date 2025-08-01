@@ -11,6 +11,13 @@ function GlobalRevenueChart({ data, labels, selectedOption }) {
     ? getMonthlyCAByGiteForYear(data, selectedOption)
     : getMonthlyCAByYear(data);
 
+  // Determine the highest monthly revenue across all charts to
+  // ensure each graph shares the same Y-axis scale
+  const globalMax = Math.max(
+    ...labels.flatMap(label => (caData[label]?.months || []).map(m => m.ca)),
+    0
+  );
+
   const getColor = (value, max) => {
     const ratio = max ? value / max : 0;
     const hue = 60 - ratio * 60; // 60 (jaune) -> 0 (rouge)
@@ -35,7 +42,7 @@ function GlobalRevenueChart({ data, labels, selectedOption }) {
               <BarChart data={months} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" tickFormatter={m => MONTH_NAMES[m - 1]} />
-                <YAxis />
+                <YAxis domain={[0, globalMax]} />
                 <Tooltip formatter={value => value.toLocaleString('fr-FR',{ style:'currency', currency:'EUR'})} />
                 <Bar dataKey="ca">
                   {months.map((entry, index) => (
