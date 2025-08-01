@@ -26,7 +26,7 @@ function UrssafBox({ data, selectedYear, selectedMonth }) {
         {gites.map(name => (
           <Stack key={name} spacing={0.5} alignItems="center">
             <Typography variant="caption" fontWeight={700}>{name}</Typography>
-            <Typography variant="caption">{nightsByGite[name] || 0}</Typography>
+            <Typography variant="caption">{nightsByGite[name] || 0} nuitées</Typography>
           </Stack>
         ))}
       </Stack>
