@@ -138,14 +138,13 @@ function computeAverageMetric(entries, selectedYear, selectedMonth, metric) {
   const today = new Date();
   const thisYear = today.getFullYear();
 
-  // Liste des années disponibles, sauf celle sélectionnée
+  // Toutes les années dispo, sauf l'année sélectionnée
   const years = Array.from(new Set(
     entries.filter(e => e.debut).map(e => e.debut.getFullYear())
   ));
   const otherYears = years.filter(y => y !== selectedYear);
 
-  if (otherYears.length === 0) return 0;
-
+  // Helper pour calculer la valeur selon le metric demandé
   const computeValue = filtered => {
     if (metric === "CA") {
       return filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
@@ -168,13 +167,16 @@ function computeAverageMetric(entries, selectedYear, selectedMonth, metric) {
     .map(year => {
       let filtered;
 
+      // Si un mois est sélectionné, on compare les mois
       if (selectedMonth) {
         filtered = entries.filter(e =>
           e.debut &&
           e.debut.getFullYear() === year &&
           (e.debut.getMonth() + 1) === Number(selectedMonth)
         );
-      } else if (selectedYear === thisYear) {
+      } 
+      // Si l'année sélectionnée est l'année en cours
+      else if (selectedYear === thisYear) {
         const month = today.getMonth();
         const day = today.getDate();
         const start = new Date(year, 0, 1);
@@ -185,11 +187,28 @@ function computeAverageMetric(entries, selectedYear, selectedMonth, metric) {
           e.debut >= start &&
           e.debut < end
         );
-      } else {
-        filtered = entries.filter(e =>
-          e.debut &&
-          e.debut.getFullYear() === year
-        );
+      } 
+      // Si l'année sélectionnée est une année passée
+      else {
+        // Pour les autres années passées, on prend les 12 mois
+        if (year !== thisYear) {
+          filtered = entries.filter(e =>
+            e.debut &&
+            e.debut.getFullYear() === year
+          );
+        } else {
+          // Pour l'année en cours (2025) : on ne prend que les mois déjà passés
+          const month = today.getMonth();
+          const day = today.getDate();
+          const start = new Date(year, 0, 1);
+          const end = new Date(year, month, day + 1);
+          filtered = entries.filter(e =>
+            e.debut &&
+            e.debut.getFullYear() === year &&
+            e.debut >= start &&
+            e.debut < end
+          );
+        }
       }
 
       const value = computeValue(filtered);
@@ -200,6 +219,7 @@ function computeAverageMetric(entries, selectedYear, selectedMonth, metric) {
   const total = values.reduce((sum, v) => sum + v, 0);
   return values.length ? total / values.length : 0;
 }
+
 
 function computeAverageCA(entries, selectedYear, selectedMonth) {
   return computeAverageMetric(entries, selectedYear, selectedMonth, "CA");
