@@ -5,7 +5,7 @@ import { getMonthlyCAByYear } from "../utils/dataUtils";
 
 const MONTH_NAMES = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
 
-function GlobalRevenueChart({ data, availableYears }) {
+function GlobalRevenueChart({ data, availableYears, selectedGite }) {
   const caByYear = getMonthlyCAByYear(data);
 
   const getColor = (value, max) => {
@@ -20,10 +20,11 @@ function GlobalRevenueChart({ data, availableYears }) {
         const months = caByYear[year]?.months || [];
         const total = caByYear[year]?.total || 0;
         const max = Math.max(...months.map(m => m.ca), 0);
+        const giteLabel = selectedGite && selectedGite !== "Tous" ? `${selectedGite} ` : "";
         return (
           <Box key={year} mb={4}>
             <Typography variant="h6" align="center" mb={2}>
-              {`Chiffre d'affaire ${year} (Total: ${total.toLocaleString('fr-FR',{ style:'currency', currency:'EUR'})})`}
+              {`Chiffre d'affaire ${giteLabel}${year} (Total: ${total.toLocaleString('fr-FR',{ style:'currency', currency:'EUR'})})`}
             </Typography>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={months} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
