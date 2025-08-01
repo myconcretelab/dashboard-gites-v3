@@ -44,8 +44,8 @@ function App() {
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(null); // null = année entière
 
-  // Sélection gîte pour les graphiques globaux
-  const [selectedGite, setSelectedGite] = useState("Tous");
+  // Sélection gîte ou année pour les graphiques globaux
+  const [selectedItem, setSelectedItem] = useState("Tous");
 
   // Switch URSSAF
   const [showUrssaf, setShowUrssaf] = useState(false);
@@ -137,8 +137,13 @@ function App() {
     );
   }
 
-  const filteredData = selectedGite === "Tous" ? data : { [selectedGite]: data[selectedGite] || [] };
-  const yearsForChart = getAvailableYears(filteredData);
+  const isYearSelection = typeof selectedItem === "number";
+  const chartData = isYearSelection
+    ? data
+    : selectedItem === "Tous"
+      ? data
+      : { [selectedItem]: data[selectedItem] || [] };
+  const labelsForChart = isYearSelection ? GITE_NAMES : getAvailableYears(chartData);
 
   return (
     <>
@@ -174,20 +179,23 @@ function App() {
           ))}
         </Grid>
         <FormControl fullWidth sx={{ mt: 4 }}>
-          <InputLabel id="gite-select-label">Gîte</InputLabel>
+          <InputLabel id="gite-select-label">Gîte ou année</InputLabel>
           <Select
             labelId="gite-select-label"
-            value={selectedGite}
-            label="Gîte"
-            onChange={(e) => setSelectedGite(e.target.value)}
+            value={selectedItem}
+            label="Gîte ou année"
+            onChange={(e) => setSelectedItem(e.target.value)}
           >
             <MenuItem value="Tous">Tous les gîtes</MenuItem>
             {GITE_NAMES.map(name => (
               <MenuItem key={name} value={name}>{name}</MenuItem>
             ))}
+            {availableYears.map(year => (
+              <MenuItem key={year} value={year}>{year}</MenuItem>
+            ))}
           </Select>
         </FormControl>
-        <GlobalRevenueChart data={filteredData} availableYears={yearsForChart} selectedGite={selectedGite} />
+        <GlobalRevenueChart data={chartData} labels={labelsForChart} selectedOption={selectedItem} />
       </Container>
      {/*  <DebugCA data={data["Edmond"] || []} /> Composant de debug pour les données d'Edmond */}
     </>
