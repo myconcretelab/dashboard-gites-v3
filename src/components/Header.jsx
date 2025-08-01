@@ -1,26 +1,28 @@
-import React from "react";
+// En-tête principal contenant filtres et statistiques globales
+import React from 'react';
 import {
   Paper, Box, Typography, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, Divider, Stack
-} from "@mui/material";
-import { TrendingUp, TrendingDown } from "@mui/icons-material";
-import UrssafBox from "./UrssafBox";
-import ProgressBarImpots from "./ProgressBarImpots";
-import { computeAverageReservations, computeAverageNights, computeAverageCA } from "../utils/dataUtils";
+} from '@mui/material';
+import { TrendingUp, TrendingDown } from '@mui/icons-material';
+import UrssafBox from './UrssafBox';
+import ProgressBarImpots from './ProgressBarImpots';
+import { computeAverageReservations, computeAverageNights, computeAverageCA } from '../utils/dataUtils';
 
+// Liste des mois pour le sélecteur de période
 const months = [
-  { value: null, label: "-- année entière --" },
-  { value: 1, label: "Janvier" },
-  { value: 2, label: "Février" },
-  { value: 3, label: "Mars" },
-  { value: 4, label: "Avril" },
-  { value: 5, label: "Mai" },
-  { value: 6, label: "Juin" },
-  { value: 7, label: "Juillet" },
-  { value: 8, label: "Août" },
-  { value: 9, label: "Septembre" },
-  { value: 10, label: "Octobre" },
-  { value: 11, label: "Novembre" },
-  { value: 12, label: "Décembre" },
+  { value: null, label: '-- année entière --' },
+  { value: 1, label: 'Janvier' },
+  { value: 2, label: 'Février' },
+  { value: 3, label: 'Mars' },
+  { value: 4, label: 'Avril' },
+  { value: 5, label: 'Mai' },
+  { value: 6, label: 'Juin' },
+  { value: 7, label: 'Juillet' },
+  { value: 8, label: 'Août' },
+  { value: 9, label: 'Septembre' },
+  { value: 10, label: 'Octobre' },
+  { value: 11, label: 'Novembre' },
+  { value: 12, label: 'Décembre' },
 ];
 
 function Header({
@@ -41,14 +43,15 @@ function Header({
   const avgNights = computeAverageNights(allEntries, selectedYear, selectedMonth);
   const avgCA = computeAverageCA(allEntries, selectedYear, selectedMonth);
   return (
-    <Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 4, bgcolor: "#fff", boxShadow: "0 4px 32px #ebebeb" }}>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="center" justifyContent="space-between">
-        <Box display="flex" gap={2} flexWrap="wrap">
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+    <Paper elevation={2} sx={{ p: 3, mb: 2, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 4px 32px #ebebeb' }}>
+      {/* Filtres de sélection de période */}
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems='center' justifyContent='space-between'>
+        <Box display='flex' gap={2} flexWrap='wrap'>
+          <FormControl size='small' sx={{ minWidth: 120 }}>
             <InputLabel>Année</InputLabel>
             <Select
               value={selectedYear}
-              label="Année"
+              label='Année'
               onChange={e => setSelectedYear(e.target.value)}
             >
               {availableYears.map(year => (
@@ -57,43 +60,43 @@ function Header({
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size='small' sx={{ minWidth: 150 }}>
             <InputLabel>Mois</InputLabel>
             <Select
               value={selectedMonth}
-              label="Mois"
+              label='Mois'
               onChange={e => setSelectedMonth(e.target.value)}
             >
-              {months.map(month =>
-                <MenuItem key={month.value || "all"} value={month.value}>
+              {months.map(month => (
+                <MenuItem key={month.value || 'all'} value={month.value}>
                   {month.label}
                 </MenuItem>
-              )}
+              ))}
             </Select>
           </FormControl>
         </Box>
 
         <Box>
-          <Stack direction="row" spacing={2}>
+          <Stack direction='row' spacing={2}>
             <FormControlLabel
               control={
                 <Switch
                   checked={showUrssaf}
                   onChange={e => setShowUrssaf(e.target.checked)}
-                  color="primary"
+                  color='primary'
                 />
               }
-              label="Mode déclaration"
+              label='Mode déclaration'
             />
             <FormControlLabel
               control={
                 <Switch
                   checked={showStats}
                   onChange={e => setShowStats(e.target.checked)}
-                  color="primary"
+                  color='primary'
                 />
               }
-              label="Stats"
+              label='Stats'
             />
           </Stack>
         </Box>
@@ -107,12 +110,14 @@ function Header({
 
       <Divider sx={{ my: 2 }} />
 
+      {/* Bloc de statistiques globales */}
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" justifyContent="center">
         <HeaderStat label="Total réservations" value={globalStats.totalReservations} average={avgReservations} showStats={showStats} />
         <HeaderStat label="Total nuits réservées" value={globalStats.totalNights} average={avgNights} showStats={showStats} />
         <HeaderStat label="Chiffre d’affaire brut" value={globalStats.totalCA} average={avgCA} isCurrency showStats={showStats} />
       </Stack>
 
+      {/* Barre d'impôt globale */}
       <Box mt={5} sx={{ maxWidth: "60%", mx: "auto" }}>
         <ProgressBarImpots caBrut={caBrut} caNet={caNet} impot={impot} />
       </Box>
