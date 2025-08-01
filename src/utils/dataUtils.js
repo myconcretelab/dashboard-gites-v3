@@ -306,6 +306,29 @@ function getMonthlyCAByYear(data) {
   return formatted;
 }
 
+function getMonthlyCAByGiteForYear(data, year) {
+  const result = {};
+  Object.entries(data).forEach(([gite, entries]) => {
+    entries.forEach(e => {
+      if (!e.debut || isHomeExchange(e)) return;
+      if (e.debut.getFullYear() !== year) return;
+      const month = e.debut.getMonth();
+      if (!result[gite]) {
+        result[gite] = Array(12).fill(0);
+      }
+      result[gite][month] += e.revenus || 0;
+    });
+  });
+
+  const formatted = {};
+  Object.keys(result).forEach(gite => {
+    const months = result[gite].map((ca, idx) => ({ month: idx + 1, ca }));
+    const total = result[gite].reduce((sum, v) => sum + v, 0);
+    formatted[gite] = { months, total };
+  });
+  return formatted;
+}
+
 // Pour URSSAF
 const URSSAF_PAYMENTS = ["Abritel", "Airbnb", "Chèque", "Virement", "Gites de France"];
 function computeUrssaf(data, selectedYear, selectedMonth) {
@@ -350,6 +373,7 @@ module.exports = {
   computeOccupation,
   getOccupationPerYear,
   getMonthlyCAByYear,
+  getMonthlyCAByGiteForYear,
   computeUrssaf,
   daysInMonth,
   safeNum
