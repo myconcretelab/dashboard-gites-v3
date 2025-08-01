@@ -45,6 +45,8 @@ function App() {
 
   // Switch URSSAF
   const [showUrssaf, setShowUrssaf] = useState(false);
+  // Switch Stats
+  const [showStats, setShowStats] = useState(false);
 
   // Gestion années disponibles
   const [availableYears, setAvailableYears] = useState([]);
@@ -143,6 +145,8 @@ function App() {
           availableYears={availableYears}
           showUrssaf={showUrssaf}
           setShowUrssaf={setShowUrssaf}
+          showStats={showStats}
+          setShowStats={setShowStats}
           data={data}
           globalStats={globalStats}
         />
@@ -157,6 +161,7 @@ function App() {
                 selectedMonth={selectedMonth}
                 availableYears={availableYears}
                 showUrssaf={showUrssaf}
+                showStats={showStats}
               />
             </Grid>
           ))}
