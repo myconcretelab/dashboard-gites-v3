@@ -28,6 +28,7 @@ function Header({
   selectedMonth, setSelectedMonth,
   availableYears,
   showUrssaf, setShowUrssaf,
+  showStats, setShowStats,
   data,
   globalStats
 }) {
@@ -73,16 +74,28 @@ function Header({
         </Box>
 
         <Box>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showUrssaf}
-                onChange={e => setShowUrssaf(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="Mode déclaration"
-          />
+          <Stack direction="row" spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showUrssaf}
+                  onChange={e => setShowUrssaf(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Mode déclaration"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showStats}
+                  onChange={e => setShowStats(e.target.checked)}
+                  color="primary"
+                />
+              }
+              label="Stats"
+            />
+          </Stack>
         </Box>
       </Stack>
 
@@ -95,9 +108,9 @@ function Header({
       <Divider sx={{ my: 2 }} />
 
       <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" justifyContent="center">
-        <HeaderStat label="Total réservations" value={globalStats.totalReservations} average={avgReservations} />
-        <HeaderStat label="Total nuits réservées" value={globalStats.totalNights} average={avgNights} />
-        <HeaderStat label="Chiffre d’affaire brut" value={globalStats.totalCA} average={avgCA} isCurrency />
+        <HeaderStat label="Total réservations" value={globalStats.totalReservations} average={avgReservations} showStats={showStats} />
+        <HeaderStat label="Total nuits réservées" value={globalStats.totalNights} average={avgNights} showStats={showStats} />
+        <HeaderStat label="Chiffre d’affaire brut" value={globalStats.totalCA} average={avgCA} isCurrency showStats={showStats} />
       </Stack>
 
       <Box mt={5} sx={{ maxWidth: "60%", mx: "auto" }}>
@@ -109,7 +122,7 @@ function Header({
 
 export default Header;
 
-function HeaderStat({ label, value, average, isCurrency }) {
+function HeaderStat({ label, value, average, isCurrency, showStats }) {
   return (
     <Box textAlign="center">
       <Typography variant="body1" fontWeight={600}>{label}</Typography>
@@ -119,18 +132,20 @@ function HeaderStat({ label, value, average, isCurrency }) {
             ? value.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
             : value}
         </Typography>
-        <Box display="flex" alignItems="center" mt={0.2}>
-          {value >= average ? (
-            <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
-          ) : (
-            <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
-          )}
-          <Typography variant="caption" ml={0.5} color="text.secondary">
-            {isCurrency
-              ? average.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
-              : average.toFixed(1)}
-          </Typography>
-        </Box>
+        {showStats && (
+          <Box display="flex" alignItems="center" mt={0.2}>
+            {value >= average ? (
+              <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+            ) : (
+              <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+            )}
+            <Typography variant="caption" ml={0.5} color="text.secondary">
+              {isCurrency
+                ? average.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })
+                : average.toFixed(1)}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );

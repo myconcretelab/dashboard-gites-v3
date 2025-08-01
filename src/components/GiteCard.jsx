@@ -9,7 +9,7 @@ import OccupationGauge from "./OccupationGauge";
 
 const COLORS = ["#2D8CFF", "#43B77D", "#F5A623", "#7E5BEF", "#FE5C73"];
 
-function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, showUrssaf }) {
+function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, showUrssaf, showStats }) {
   const stats = computeGiteStats(data, selectedYear, selectedMonth);
   const averageCA = computeAverageCA(data, selectedYear, selectedMonth);
   const averageReservations = computeAverageReservations(data, selectedYear, selectedMonth);
@@ -59,16 +59,18 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
             value={
               <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
                 <Typography>{stats.reservations}</Typography>
-                <Box display="flex" alignItems="center" mt={0.2}>
-                  {stats.reservations >= averageReservations ? (
-                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
-                  ) : (
-                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
-                  )}
-                  <Typography variant="caption" ml={0.5} color="text.secondary">
-                    {averageReservations.toFixed(1)}
-                  </Typography>
-                </Box>
+                {showStats && (
+                  <Box display="flex" alignItems="center" mt={0.2}>
+                    {stats.reservations >= averageReservations ? (
+                      <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                    ) : (
+                      <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                    )}
+                    <Typography variant="caption" ml={0.5} color="text.secondary">
+                      {averageReservations.toFixed(1)}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             }
           />
@@ -77,16 +79,18 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
             value={
               <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
                 <Typography>{stats.totalNights}</Typography>
-                <Box display="flex" alignItems="center" mt={0.2}>
-                  {stats.totalNights >= averageNights ? (
-                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
-                  ) : (
-                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
-                  )}
-                  <Typography variant="caption" ml={0.5} color="text.secondary">
-                    {averageNights.toFixed(1)}
-                  </Typography>
-                </Box>
+                {showStats && (
+                  <Box display="flex" alignItems="center" mt={0.2}>
+                    {stats.totalNights >= averageNights ? (
+                      <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                    ) : (
+                      <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                    )}
+                    <Typography variant="caption" ml={0.5} color="text.secondary">
+                      {averageNights.toFixed(1)}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             }
           />
@@ -97,16 +101,18 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
                 <Typography>
                   {stats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
                 </Typography>
-                <Box display="flex" alignItems="center" mt={0.2}>
-                  {stats.totalCA >= averageCA ? (
-                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
-                  ) : (
-                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
-                  )}
-                  <Typography variant="caption" ml={0.5} color="text.secondary">
-                    {averageCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-                  </Typography>
-                </Box>
+                {showStats && (
+                  <Box display="flex" alignItems="center" mt={0.2}>
+                    {stats.totalCA >= averageCA ? (
+                      <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                    ) : (
+                      <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                    )}
+                    <Typography variant="caption" ml={0.5} color="text.secondary">
+                      {averageCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             }
           />
@@ -119,16 +125,18 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
                 <Typography>
                   {stats.meanPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
                 </Typography>
-                <Box display="flex" alignItems="center" mt={0.2}>
-                  {stats.meanPrice >= averagePrice ? (
-                    <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
-                  ) : (
-                    <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
-                  )}
-                  <Typography variant="caption" ml={0.5} color="text.secondary">
-                    {averagePrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-                  </Typography>
-                </Box>
+                {showStats && (
+                  <Box display="flex" alignItems="center" mt={0.2}>
+                    {stats.meanPrice >= averagePrice ? (
+                      <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
+                    ) : (
+                      <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
+                    )}
+                    <Typography variant="caption" ml={0.5} color="text.secondary">
+                      {averagePrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             }
           />
