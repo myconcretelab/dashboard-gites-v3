@@ -56,21 +56,24 @@ function GiteCard({ name, data, selectedYear, selectedMonth, availableYears, sho
           <Stat
             label="CA brut"
             value={
-              <Box component="span" display="flex" alignItems="center">
-                {stats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
-                <Box component="span" display="flex" alignItems="center" ml={0.5}>
+              <Box component="span" display="flex" flexDirection="column" alignItems="flex-start">
+                <Typography>
+                  {stats.totalCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
+                </Typography>
+                <Box display="flex" alignItems="center" mt={0.2}>
                   {stats.totalCA >= averageCA ? (
                     <TrendingUp sx={{ fontSize: 16, color: "#43B77D" }} />
                   ) : (
                     <TrendingDown sx={{ fontSize: 16, color: "#e53935" }} />
                   )}
-                  <Typography variant="caption" ml={0.20} color="text.secondary">
+                  <Typography variant="caption" ml={0.5} color="text.secondary">
                     {averageCA.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })}
                   </Typography>
                 </Box>
               </Box>
             }
           />
+
           <Stat label="Durée moy." value={stats.meanStay.toFixed(1) + " nuits"} />
           <Stat label="Prix moy/nuit" value={stats.meanPrice.toLocaleString("fr-FR", { style: "currency", currency: "EUR" })} />
         </Stack>
