@@ -282,6 +282,30 @@ function getOccupationPerYear(entries, allYears, selectedMonth) {
   }));
 }
 
+// Chiffre d'affaire mensuel global par année
+function getMonthlyCAByYear(data) {
+  const result = {};
+  Object.values(data).forEach(entries => {
+    entries.forEach(e => {
+      if (!e.debut || isHomeExchange(e)) return;
+      const year = e.debut.getFullYear();
+      const month = e.debut.getMonth(); // 0-index
+      if (!result[year]) {
+        result[year] = Array(12).fill(0);
+      }
+      result[year][month] += e.revenus || 0;
+    });
+  });
+
+  const formatted = {};
+  Object.keys(result).forEach(year => {
+    const months = result[year].map((ca, idx) => ({ month: idx + 1, ca }));
+    const total = result[year].reduce((sum, v) => sum + v, 0);
+    formatted[year] = { months, total };
+  });
+  return formatted;
+}
+
 // Pour URSSAF
 const URSSAF_PAYMENTS = ["Abritel", "Airbnb", "Chèque", "Virement", "Gites de France"];
 function computeUrssaf(data, selectedYear, selectedMonth) {
@@ -325,6 +349,7 @@ module.exports = {
   computeAveragePrice,
   computeOccupation,
   getOccupationPerYear,
+  getMonthlyCAByYear,
   computeUrssaf,
   daysInMonth,
   safeNum

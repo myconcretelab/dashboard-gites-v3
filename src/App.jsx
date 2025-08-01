@@ -5,6 +5,7 @@ import GiteCard from "./components/GiteCard";
 import { parseGitesData, getAvailableYears, filterDataByPeriod, computeGlobalStats } from "./utils/dataUtils";
 import "./index.css";
 import DebugCA from "./components/DebugCA";
+import GlobalRevenueChart from "./components/GlobalRevenueChart";
 
 const GITE_NAMES = ["Phonsine", "Gree", "Edmond", "Liberté"];
 const PASSWORD = "tellthem"; // ← Change-le si tu veux
@@ -166,6 +167,7 @@ function App() {
             </Grid>
           ))}
         </Grid>
+        <GlobalRevenueChart data={data} availableYears={availableYears} />
       </Container>
      {/*  <DebugCA data={data["Edmond"] || []} /> Composant de debug pour les données d'Edmond */}
     </>
