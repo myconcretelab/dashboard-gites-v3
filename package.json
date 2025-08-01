@@ -1,6 +1,7 @@
 {
   "name": "dashboard-gites-v3",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "Tableau de bord des gîtes avec statistiques détaillées",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
