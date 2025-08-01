@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Grid, CssBaseline, CircularProgress, Box, Typography } from "@mui/material";
+import { Container, Grid, CssBaseline, CircularProgress, Box, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Header from "./components/Header";
 import GiteCard from "./components/GiteCard";
 import { parseGitesData, getAvailableYears, filterDataByPeriod, computeGlobalStats } from "./utils/dataUtils";
@@ -43,6 +43,9 @@ function App() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(null); // null = année entière
+
+  // Sélection gîte pour les graphiques globaux
+  const [selectedGite, setSelectedGite] = useState("Tous");
 
   // Switch URSSAF
   const [showUrssaf, setShowUrssaf] = useState(false);
@@ -134,6 +137,9 @@ function App() {
     );
   }
 
+  const filteredData = selectedGite === "Tous" ? data : { [selectedGite]: data[selectedGite] || [] };
+  const yearsForChart = getAvailableYears(filteredData);
+
   return (
     <>
       <CssBaseline />
@@ -167,7 +173,21 @@ function App() {
             </Grid>
           ))}
         </Grid>
-        <GlobalRevenueChart data={data} availableYears={availableYears} />
+        <FormControl fullWidth sx={{ mt: 4 }}>
+          <InputLabel id="gite-select-label">Gîte</InputLabel>
+          <Select
+            labelId="gite-select-label"
+            value={selectedGite}
+            label="Gîte"
+            onChange={(e) => setSelectedGite(e.target.value)}
+          >
+            <MenuItem value="Tous">Tous les gîtes</MenuItem>
+            {GITE_NAMES.map(name => (
+              <MenuItem key={name} value={name}>{name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <GlobalRevenueChart data={filteredData} availableYears={yearsForChart} selectedGite={selectedGite} />
       </Container>
      {/*  <DebugCA data={data["Edmond"] || []} /> Composant de debug pour les données d'Edmond */}
     </>
