@@ -93,7 +93,7 @@ function computeGiteStats(entries, year, month) {
   const payments = {};
   // Répartition nuitées par groupe de paiement
   const nuiteesByPayment = {
-    "Virement / chèque": 0,
+    "Virmnt/Chq": 0,
     "Airbnb": 0,
     "Abritel": 0,
     "Gites de France": 0,
@@ -116,7 +116,7 @@ function computeGiteStats(entries, year, month) {
     } else if (p.includes("gites de france")) {
       nuiteesByPayment["Gites de France"] += nuitées;
     } else if (p.includes("virement") || p.includes("chèque") || p.includes("cheque")) {
-      nuiteesByPayment["Virement / chèque"] += nuitées;
+      nuiteesByPayment["Virmnt/Chq"] += nuitées;
     }
   });
 
@@ -132,24 +132,80 @@ function computeGiteStats(entries, year, month) {
   };
 }
 
-// Moyenne du CA pour la même période sur les autres années
-function computeAverageCA(entries, year, month) {
-  // Récupère la liste des années présentes dans les données
+function computeAverageCA(entries, selectedYear, selectedMonth) {
+  if (!entries || entries.length === 0) return 0;
+
+  const today = new Date();
+  const thisYear = today.getFullYear();
+
+  // Liste des années disponibles, sauf celle sélectionnée
   const years = Array.from(new Set(
-    (entries || [])
-      .filter(e => e.debut)
-      .map(e => e.debut.getFullYear())
+    entries.filter(e => e.debut).map(e => e.debut.getFullYear())
   ));
-  const otherYears = years.filter(y => y !== year);
+  const otherYears = years.filter(y => y !== selectedYear);
+
   if (otherYears.length === 0) return 0;
 
-  const totalCA = otherYears.reduce((sum, y) => {
-    const stats = computeGiteStats(entries, y, month);
-    return sum + stats.totalCA;
-  }, 0);
+  // Cas 1 : Mois sélectionné -> moyenne du CA pour ce mois sur toutes les autres années
+  if (selectedMonth) {
+    const caList = otherYears
+      .map(year => {
+        const filtered = entries.filter(e =>
+          e.debut &&
+          e.debut.getFullYear() === year &&
+          (e.debut.getMonth() + 1) === Number(selectedMonth)
+        );
+        const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
+        return filtered.length > 0 ? ca : null;
+      })
+      .filter(ca => ca !== null);
+    const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
+    return caList.length ? totalCA / caList.length : 0;
+  }
 
-  return totalCA / otherYears.length;
+  // Cas 2 : Année sélectionnée = année en cours
+  if (selectedYear === thisYear) {
+    // On compare sur la même période (1er janvier => aujourd'hui) des autres années
+    const month = today.getMonth(); // 0-11
+    const day = today.getDate();
+
+    const caList = otherYears
+      .map(year => {
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, month, day + 1);
+        const filtered = entries.filter(e =>
+          e.debut &&
+          e.debut.getFullYear() === year &&
+          e.debut >= start &&
+          e.debut < end
+        );
+        const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
+        return filtered.length > 0 ? ca : null;
+      })
+      .filter(ca => ca !== null);
+    const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
+    return caList.length ? totalCA / caList.length : 0;
+  }
+
+  // Cas 3 : Année passée sélectionnée
+  // Moyenne sur l'année entière des autres années
+  const caList = otherYears
+    .map(year => {
+      const filtered = entries.filter(e =>
+        e.debut &&
+        e.debut.getFullYear() === year
+      );
+      const ca = filtered.reduce((sum, e) => sum + (e.revenus || 0), 0);
+      return filtered.length > 0 ? ca : null;
+    })
+    .filter(ca => ca !== null);
+
+  const totalCA = caList.reduce((sum, ca) => sum + ca, 0);
+  return caList.length ? totalCA / caList.length : 0;
 }
+
+
+
 
 // Pour les jauges d’occupation
 function computeOccupation(entries, year, month) {
