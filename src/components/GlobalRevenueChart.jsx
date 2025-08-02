@@ -30,7 +30,7 @@ function GlobalRevenueChart({ data, labels, selectedOption }) {
   const getColor = (value, max) => {
     const ratio = max ? value / max : 0;
     const hue = 60 - ratio * 60; // 60 (jaune) -> 0 (rouge)
-    return `hsl(${hue}, 80%, 55%)`;
+    return `hsla(${hue}, 90%, 70%,100%)`;
   };
 
   return (
@@ -62,12 +62,12 @@ function GlobalRevenueChart({ data, labels, selectedOption }) {
             </Box>
             <ResponsiveContainer width="100%" height={220}>
               <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="0" />
-                <XAxis dataKey='month' tickFormatter={m => MONTH_NAMES[m - 1]} />
+                
+                <XAxis dataKey='month' tickFormatter={m => MONTH_NAMES[m - 1]} stroke="#777777ff"/>
                 {/* Échelle harmonisée avec un maximum arrondi et des paliers réguliers */}
-                <YAxis domain={[0, roundedMax]} ticks={ticks} />
+                <YAxis domain={[0, roundedMax]} ticks={ticks}  stroke="#777777ff"/>
                 <Tooltip formatter={value => value.toLocaleString('fr-FR',{ style:'currency', currency:'EUR'})} />
-                <Line type="monotone" dataKey="avg" stroke="#bbb" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="avg" stroke="#ccc" strokeWidth={5} dot={true} />
                 <Bar dataKey="ca">
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={getColor(entry.ca, max)} />
