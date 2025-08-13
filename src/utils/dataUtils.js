@@ -17,8 +17,8 @@ function parseGitesData(raw) {
         prixNuit: safeNum(row[6]),
         revenus: safeNum(row[7]),
         paiement: (row[8] || "").toString().trim(),
-        taxeSejour: safeNum(row[9]),
-        nuitsTaxe: safeNum(row[10]),
+        taxeSejour: 0,
+        nuitsTaxe: adultes * nuits
       }));
   });
   return gites;
